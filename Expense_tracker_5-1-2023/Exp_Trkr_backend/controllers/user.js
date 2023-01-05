@@ -12,7 +12,7 @@ exports.postsignupform=async(req,res,next)=>{
     }
     
     await User.create({username:username,email:email,password:password})
-    .then(result=>{
+    .then(()=>{
         
         res.json({message:"successfully created new user"})
     })
@@ -22,14 +22,33 @@ exports.postsignupform=async(req,res,next)=>{
 }
     
     
-/*exports.postloginform=(req,res,next)=>{
+exports.postloginform=(req,res,next)=>{
     try{
     const email=req.body.email;
     const password=req.body.password;
     if(email==undefined||email.length===0||password==undefined||password.length===0){
-        res.status(400).json({msg:"fields should not be empty"});
+        res.status(400).json({message:"fields should not be empty"});
+    }
+    else{
+        User.findAll({where:{email:email}}).then(user=>{
+            if(user[0].email==email)
+            {
+                
+                console.log(user[0].password);//from database
+                if(user[0].password==password){
+                    res.status(200).json({message:"login successful"})
+                }
+                else{
+                    res.status(400).json({message:"password incorrect/user not authorized"})
+                }
+            }
+            else{
+                res.status(404).json({message:"user does not exist"})
+            }
+        }).catch(err=>res.status(500).json({message:"error and mostly user does not exist"}));
+    
     }
     }
     catch(err){console.log(err)}
 
-}*/
+}

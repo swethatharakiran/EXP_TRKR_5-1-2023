@@ -11,11 +11,12 @@ async function onloginsubmit(e){
     }
     try{
     const response=await axios.post("http://localhost:3000/user/login",obj2)
-    if(response.status===200)
+    
     alert(response.data.message);  
     }
-    catch(err){console.log(JSON.stringify(err))
+    catch(err){console.log(err)
         document.body.innerHTML+=`<div style="color:red">${err.message}</div>`
+        
     
     };
 }
