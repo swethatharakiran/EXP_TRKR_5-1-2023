@@ -13,6 +13,7 @@ async function onloginsubmit(e){
     const response=await axios.post("http://localhost:3000/login",obj2)
     
     alert(response.data.message); 
+    localStorage.setItem('token',response.data.token);
     window.location.href="expense.html";
     
     }
