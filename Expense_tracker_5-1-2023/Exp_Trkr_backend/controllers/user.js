@@ -29,7 +29,6 @@ exports.postsignupform=async(req,res,next)=>{
         
 }
     
-    
 exports.postloginform=(req,res,next)=>{
     try{
     const email=req.body.email;
@@ -65,3 +64,4 @@ exports.postloginform=(req,res,next)=>{
     catch(err){console.log(err)}
 
 }
+
