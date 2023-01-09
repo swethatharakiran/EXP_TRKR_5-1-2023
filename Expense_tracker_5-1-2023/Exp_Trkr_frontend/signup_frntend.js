@@ -14,7 +14,7 @@ const obj1={
     email:email,
     password:password
 }
-axios.post('http://localhost:3000/user/signup',obj1)
+axios.post('http://localhost:3000/signup',obj1)
     .then(response=>{console.log(response.data);
     alert(response.data.message);
     })
@@ -24,5 +24,3 @@ axios.post('http://localhost:3000/user/signup',obj1)
     document.body.innerHTML+=`<div style="color:red">${err.message}</div>`
 })
 }
-
-

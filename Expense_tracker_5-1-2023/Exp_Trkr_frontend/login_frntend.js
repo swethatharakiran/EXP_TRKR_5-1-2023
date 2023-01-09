@@ -10,9 +10,11 @@ async function onloginsubmit(e){
         password:password
     }
     try{
-    const response=await axios.post("http://localhost:3000/user/login",obj2)
+    const response=await axios.post("http://localhost:3000/login",obj2)
     
-    alert(response.data.message);  
+    alert(response.data.message); 
+    window.location.href="expense.html";
+    
     }
     catch(err){console.log(err)
         document.body.innerHTML+=`<div style="color:red">${err.message}</div>`
