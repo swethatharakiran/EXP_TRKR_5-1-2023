@@ -16,6 +16,9 @@ app.use(bodyparser.urlencoded({extended:true}));
 app.use(expenseroutes);
 app.use(addexpenseroutes);
 
+User.hasMany(Expense);
+Expense.belongsTo(User);
+
 sequelize.sync().then(res=>{
     app.listen(3000);
 }).catch(err=>console.log(err));

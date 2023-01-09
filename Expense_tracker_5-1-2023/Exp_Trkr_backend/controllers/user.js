@@ -1,5 +1,6 @@
 const User=require('../models/user');
 const bcrypt=require('bcrypt');
+const jwt=require('jsonwebtoken');
 const saltrounds=10;
 
 exports.postsignupform=async(req,res,next)=>{
@@ -47,7 +48,7 @@ exports.postloginform=(req,res,next)=>{
                     }
                     else{
                         if(result===true){
-                            res.status(200).json({message:"login successful"})
+                            res.status(200).json({message:"login successful",token:generatetoken(user[0].id)})
                         }
                         else{
                             res.status(400).json({message:"password incorrect/user not authorized"})
@@ -65,3 +66,6 @@ exports.postloginform=(req,res,next)=>{
 
 }
 
+function generatetoken(id){
+    return jwt.sign({userid:id},'secretkey123')
+}

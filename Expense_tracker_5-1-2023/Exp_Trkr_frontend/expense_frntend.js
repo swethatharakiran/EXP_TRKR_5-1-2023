@@ -2,6 +2,7 @@ const f3=document.getElementById('expenseform');
 const ul=document.getElementById('expenselist');
 
 f3.addEventListener("submit",addexpense);
+
 async function addexpense(e){
     e.preventDefault();
     const expense={
@@ -11,7 +12,9 @@ async function addexpense(e){
 
     }
     try{
-    const response=await axios.post("http://localhost:3000/expense/add-expense",expense)
+    const token=localStorage.getItem('token');
+    const response=await axios.post("http://localhost:3000/expense/add-expense",
+    expense,{headers:{"Authorization":token}})
     alert("added successfully");
     //console.log(response.data);
     showlist(response.data);
@@ -32,7 +35,8 @@ function showlist(obj){
 }
 
 function delete_exp(id1){
-    axios.get(`http://localhost:3000/expense/delete-expense/${id1}`)
+    const token=localStorage.getItem('token');
+    axios.get(`http://localhost:3000/expense/delete-expense/${id1}`,{headers:{"Authorization":token}})
     .then(()=>{
         const childnode=document.getElementById(id1)
         ul.removeChild(childnode);
@@ -54,7 +58,8 @@ function edit_exp(id1){
 window.addEventListener('DOMContentLoaded',getdata);
 
 function getdata(){
-    axios.get("http://localhost:3000/expense/get-expense/")
+    const token=localStorage.getItem('token');
+    axios.get("http://localhost:3000/expense/get-expense/",{headers:{"Authorization":token}})
     .then((result)=>{
         console.log(result.data.allexpense);
         for(let i=0; i<result.data.allexpense.length;i++){

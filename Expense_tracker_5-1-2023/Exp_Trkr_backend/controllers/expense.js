@@ -1,4 +1,5 @@
 const Exp=require('../models/expense');
+const jwt=require('jsonwebtoken');
 
 
 exports.postaddexpense=async(req,res,next)=>{
@@ -7,7 +8,7 @@ exports.postaddexpense=async(req,res,next)=>{
     const desc=req.body.desc;
     const category=req.body.category;
     
-    await Exp.create({amount:amount,desc:desc,category:category})
+    await Exp.create({amount:amount,desc:desc,category:category,userId:req.user.id})
     //.then((result)=>{res.status(200).json({message:"Successfully added expense"})})
     .then((result)=>{res.status(200).json(result.dataValues)})
       
@@ -23,7 +24,7 @@ exports.postaddexpense=async(req,res,next)=>{
 exports.delete_expense=async(req,res,next)=>{
     const id=req.params.id;
     try{
-        await Exp.destroy({where:{id:id}});
+        await Exp.destroy({where:{id:id,userId:req.user.id}});
         res.sendStatus(200);
     }
     catch(err){
@@ -49,7 +50,7 @@ exports.edit_exp=async(req,res,next)=>{
 
 exports.getexpense=async(req,res,next)=>{
     try{
-        const exp_list=await Exp.findAll();
+        const exp_list=await Exp.findAll({where:{userId:req.user.id}});
         console.log('hi')
         res.status(200).json({allexpense:exp_list});
     }
