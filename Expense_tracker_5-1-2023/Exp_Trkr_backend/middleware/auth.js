@@ -3,6 +3,8 @@ const User=require('../models/user');
 const userauthorization=(req,res,next)=>{
     try{
         const token=req.header('Authorization');
+        console.log(token);
+        console.log(req.headers);
         const user=jwt.verify(token,'secretkey123');
         //console.log(user.id);
         console.log(user.userid);//as stored in token
@@ -18,5 +20,4 @@ const userauthorization=(req,res,next)=>{
         res.status(500).json({error:err})
     }
 }
-
 module.exports={userauthorization};
