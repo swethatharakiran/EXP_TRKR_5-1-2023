@@ -9,15 +9,23 @@ const User=require('./models/user');
 const Expense=require('./models/expense');
 const expenseroutes=require('./routes/user');
 const addexpenseroutes=require('./routes/expense');
+const purchaseroutes=require('./routes/purchase');
+const premiumfeatureroutes=require('./routes/premiumfeature');
+const Order = require('./models/orders');
 
 app.use(cors());
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended:true}));
 app.use(expenseroutes);
 app.use(addexpenseroutes);
+app.use(purchaseroutes);
+app.use(premiumfeatureroutes);
 
 User.hasMany(Expense);
 Expense.belongsTo(User);
+
+User.hasMany(Order);
+Order.belongsTo(User);
 
 sequelize.sync().then(res=>{
     app.listen(3000);
