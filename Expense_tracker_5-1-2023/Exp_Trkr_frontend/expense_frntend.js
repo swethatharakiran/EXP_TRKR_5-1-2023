@@ -146,7 +146,7 @@ function showleaderboard(){
         console.log(lb_array);
         lb_array.data.forEach(userdetails => {
             console.log(userdetails);
-            lb_ele.innerHTML+=`<li> Name-${userdetails.name} Total: ${userdetails.total}</li>`;
+            lb_ele.innerHTML+=`<li> Name-${userdetails.username} Total: ${userdetails.total}</li>`;
         });
 
     }
