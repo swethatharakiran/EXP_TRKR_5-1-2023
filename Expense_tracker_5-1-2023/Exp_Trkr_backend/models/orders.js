@@ -1,7 +1,7 @@
 const Sequelize=require('sequelize');
 const sequelize=require('../util/database');
 
-const Expense=sequelize.define('expense',{
+const Order=sequelize.define('order',{
     id:{
         type:Sequelize.INTEGER,
         autoIncrement:true,
@@ -9,20 +9,18 @@ const Expense=sequelize.define('expense',{
         primaryKey:true
     },
    
-    amount:{
-        type:Sequelize.INTEGER
-      
-
+    paymentid:{
+        type:Sequelize.STRING
     },
-    desc:{
+
+    orderid:{
         type:Sequelize.STRING
         
     },
-    category:{
+    status:{
         type:Sequelize.STRING
        
     }
-    
 })
 
-module.exports=Expense;
+module.exports=Order;
