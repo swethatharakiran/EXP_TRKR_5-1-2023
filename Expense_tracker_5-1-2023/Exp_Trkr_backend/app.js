@@ -11,6 +11,7 @@ const expenseroutes=require('./routes/user');
 const addexpenseroutes=require('./routes/expense');
 const purchaseroutes=require('./routes/purchase');
 const premiumfeatureroutes=require('./routes/premiumfeature');
+const passwordroutes=require('./routes/password');
 const Order = require('./models/orders');
 
 app.use(cors());
@@ -20,6 +21,7 @@ app.use(expenseroutes);
 app.use(addexpenseroutes);
 app.use(purchaseroutes);
 app.use(premiumfeatureroutes);
+app.use(passwordroutes);
 
 User.hasMany(Expense);
 Expense.belongsTo(User);

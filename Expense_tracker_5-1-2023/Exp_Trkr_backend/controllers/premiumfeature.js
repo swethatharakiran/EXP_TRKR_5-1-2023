@@ -22,27 +22,10 @@ exports.getuserleaderboard=async(req,res,next)=>{
             
         });
         
-       // const useraggregateexpenses={};
-        //console.log("FROM CONTROLLER");
-        //console.log(expenses)
-        //expenses.forEach(expense=>{
-            //console.log("FROM FOREACH LOOP")
-            //console.log(expense.dataValues.userId);
-           // if(useraggregateexpenses[expense.dataValues.userId]){
-             //   useraggregateexpenses[expense.dataValues.userId]+=expense.amount;
-            //}
-            //else{
-              //  useraggregateexpenses[expense.dataValues.userId]=expense.amount;
-            //}
-        //})
-        //var userleaderboarddetails=[];
-       // users.forEach(user=>{
-            
-            //userleaderboarddetails.push({name:user.dataValues.username,total:useraggregateexpenses[user.dataValues.id]||0});
-            
-       // })
+              
       
         //userleaderboarddetails.sort((a,b)=>b.total-a.total)
+        
         res.status(200).json(usersleaderboard);
     }
     catch(err){
