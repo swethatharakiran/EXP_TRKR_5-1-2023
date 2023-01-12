@@ -8,7 +8,8 @@ async function recoverpassword(e){
         email:email
     }
     try{
-    await axios.post("http://localhost:3000/password/forgotpassword",obj1)
+    const response=await axios.post("http://localhost:3000/password/forgotpassword",obj1);
+    alert(response.data.message);
     }
     catch(err){
         console.log(err)}
