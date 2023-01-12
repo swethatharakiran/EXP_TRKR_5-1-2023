@@ -68,6 +68,10 @@ function getdata(){
         showleaderboard();   
 
     }
+    else{
+        const b2=document.getElementById('downloadexpense');
+        b2.remove();
+    }
     axios.get("http://localhost:3000/expense/get-expense/",{headers:{"Authorization":token}})
     .then((result)=>{
         console.log(result.data.allexpense);
@@ -151,4 +155,25 @@ function showleaderboard(){
 
     }
 
+}
+
+
+function download(){
+    axios.get('http://localhost:3000/user/download', { headers: {"Authorization" : token} })
+    .then((response) => {
+        if(response.status === 201){
+            //backend is sending a download link
+            // open in browser, the file would download
+            var a = document.createElement("a");
+            a.href = response.data.fileUrl;
+            a.download = 'myexpense.csv';
+            a.click();
+        } else {
+            throw new Error(response.data.message)
+        }
+
+    })
+    .catch((err) => {
+        showError(err)
+    });
 }
