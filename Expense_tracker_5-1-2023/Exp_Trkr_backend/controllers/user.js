@@ -48,8 +48,14 @@ exports.postloginform=(req,res,next)=>{
                     }
                     else{
                         if(result===true){
-                            res.status(200).json({message:"login successful",token:generatetoken(user[0].id,user[0].ispremiumuser)})
-                        }
+                            if(user[0].ispremiumuser){
+                                res.status(200).json({message:"login successful",statuscode:'200',token:generatetoken(user[0].id,user[0].ispremiumuser)})
+
+                            }
+                            else{
+                              res.json({message:"login successful",statuscode:'401',token:generatetoken(user[0].id,user[0].ispremiumuser)})
+                             }
+                            }
                         else{
                             res.status(400).json({message:"password incorrect/user not authorized"})
                         }
@@ -69,4 +75,7 @@ exports.postloginform=(req,res,next)=>{
 function generatetoken(id,ispremiumuser){
     return jwt.sign({userid:id,ispremiumuser:ispremiumuser},'secretkey123')
 }
+
+
+
 //module.exports= {generatetoken};

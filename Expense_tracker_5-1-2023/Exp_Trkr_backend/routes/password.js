@@ -6,9 +6,9 @@ const passwordcontroller=require('../controllers/password');
 
 Router5.post('/password/forgotpassword',
 passwordcontroller.forgotpassword);
-Router5.post('/password/resetpassword',
+Router5.get('/password/resetpassword/:id',
 passwordcontroller.resetpassword);
-Router5.post('/password/updatepassword',
+Router5.get('/password/updatepassword/:resetpasswordid',
 passwordcontroller.updatepassword);
 
 

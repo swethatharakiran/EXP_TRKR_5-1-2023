@@ -159,7 +159,7 @@ function showleaderboard(){
 
 
 function download(){
-    axios.get('http://localhost:3000/user/download', { headers: {"Authorization" : token} })
+    axios.get('http://localhost:3000/download', { headers: {"Authorization" : token} })
     .then((response) => {
         if(response.status === 201){
             //backend is sending a download link

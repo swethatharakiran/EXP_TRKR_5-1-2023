@@ -4,6 +4,7 @@ const bcrypt=require('bcrypt');
 const User=require('../models/user');
 const Forgotpassword=require('../models/password');
 //const sequelize = require('../util/database');
+//require('dotenv').config();
 
 exports.forgotpassword=async(req,res)=>{
 try{
@@ -18,7 +19,7 @@ try{
             throw new Error(err)
         })
 
-        sgmail.setApiKey(' ');// enter sendgrid api key here
+        sgmail.setApiKey('');// enter sendgrid api key here
         const msg = {
             to: 'swethakh29@gmail.com', 
             from: 'yj.rocks.2411@gmail.com', 
@@ -53,6 +54,7 @@ try{
 
 exports.resetpassword = (req, res) => {
     const id =  req.params.id;
+    console.log(req.params.id);
     Forgotpassword.findOne({ where : { id }}).then(forgotpasswordrequest => {
         if(forgotpasswordrequest){
             forgotpasswordrequest.update({ active: false});
