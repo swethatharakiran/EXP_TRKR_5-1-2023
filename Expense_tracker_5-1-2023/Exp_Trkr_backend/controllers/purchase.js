@@ -3,13 +3,13 @@ const Razorpay=require('razorpay');
 const jwt=require('jsonwebtoken');
 //const usercontroller=require('./user');
 //import { generatetoken } from './user';
-require('dotenv').config();
+//require('dotenv').config();
 
 exports.purchasepremium=async(req,res,next)=>{
     try{
     var rzp=new Razorpay({
-    key_id:'rzp_test_eyCMzB7ZCBcHuj',
-    key_secret:'l223wWvoC0zSQ7jgxW5UvtJt'
+    key_id:process.env.RAZORPAY_KEY_ID,
+    key_secret:process.env.RAZORPAY_KEY_ID_SECRET
 })
 const amount=3000;
 rzp.orders.create({amount,currency:'INR'},(err,order)=>{
@@ -38,7 +38,8 @@ exports.updatetransaction=async(req,res,next)=>{
         const promise2= req.user.update({ispremiumuser:true})
         Promise.all([promise1,promise2]).then(()=>{
             return res.status(202).json({success:true,message:'Transaction successful'})
-            //return res.status(202).json({success:true,message:'Transaction successful',token:generatetoken(userid,true)})
+            //return res.status(202).json({success:true,message:'Transaction successful',
+            //token:generatetoken(userid,true)})
         }).catch(err=>{
             throw new Error(err);
         })           
