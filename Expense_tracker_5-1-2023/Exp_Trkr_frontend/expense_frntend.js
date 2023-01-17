@@ -74,13 +74,27 @@ function getdata(){
     }
     axios.get("http://localhost:3000/expense/get-expense/",{headers:{"Authorization":token}})
     .then((result)=>{
-        console.log(result.data.allexpense);
+        //console.log(result.data.allexpense);
         for(let i=0; i<result.data.allexpense.length;i++){
             showlist(result.data.allexpense[i]);
         }
+        //console.log("FROM FRONTEND",result.data.downloadedfilesurl.length);
+        //for(let i=0; i<result.data.downloadedfilesurl.length;i++){
+          //  listofurls(result.data.downloadedfilesurl[i]);
+        //}
+
     })
     .catch(err=>console.log(err));
 }
+
+//function listofurls(link){
+  //  var ul=document.getElementById('downlodedfiles');
+    //var a = document.createElement("a");
+      //      a.href = link.fileURL;
+        //   a.download = "myexpense";
+    //ul.appendChild(a);
+     
+//}
 
 document.getElementById('razorpay-btn').onclick=async function(e){
     e.preventDefault();
@@ -159,14 +173,17 @@ function showleaderboard(){
 
 
 function download(){
+    const token=localStorage.getItem('token');
     axios.get('http://localhost:3000/download', { headers: {"Authorization" : token} })
     .then((response) => {
+        console.log("HELLO--")
         if(response.status === 201){
+            console.log(response.data);
             //backend is sending a download link
             // open in browser, the file would download
             var a = document.createElement("a");
-            a.href = response.data.fileUrl;
-            a.download = 'myexpense.csv';
+            a.href = response.data.fileURL;
+            a.download = "myexpense";
             a.click();
         } else {
             throw new Error(response.data.message)
@@ -174,6 +191,6 @@ function download(){
 
     })
     .catch((err) => {
-        showError(err)
+        console.log(err);
     });
 }
