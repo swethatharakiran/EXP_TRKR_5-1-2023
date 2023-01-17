@@ -52,15 +52,28 @@ exports.edit_exp=async(req,res,next)=>{
 
 exports.getexpense=async(req,res,next)=>{
     try{
-        const exp_list=await Exp.findAll({where:{userId:req.user.id}});
-         console.log('hi')
-        res.status(200).json({allexpense:exp_list});
-    }
-    catch(err){
-        console.log(err);
-        res.status(500).json({error:err});
-    }
+        const ITEMS_PER_PAGE=2;
+        const page=+req.query.page||1;
+        const total= await Exp.count({where:{userId:req.user.id}})
+            
+        const expenses=await Exp.findAll({where:{userId:req.user.id},
+                offset:(page-1)*ITEMS_PER_PAGE,
+                limit:ITEMS_PER_PAGE
+            });
+        
+            res.status(200).json({
+                allexpenses:expenses,
+                currentpage:page,
+                hasnextpage:total-page*ITEMS_PER_PAGE>0,
+                nextpage:page+1,
+                haspreviouspage:page>1,
+                previouspage:page-1,
+                lastpage:Math.ceil(total/ITEMS_PER_PAGE),
 
+        })
+        
+}
+catch(err){console.log(err)};
 }
 
 exports.downloadExpenses =  async (req, res) => {
