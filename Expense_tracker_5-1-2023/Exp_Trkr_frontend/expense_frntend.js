@@ -26,7 +26,7 @@ async function addexpense(e){
 
 function showlist(obj){
    console.log(obj);
-
+    
     ul.innerHTML+=`<li class='item' id="${obj.id}">
     ${obj.amount}-${obj.desc}-${obj.category} 
     <button class='btn btn-primary' onclick='delete_exp(${obj.id})'>Delete</button>
@@ -55,46 +55,98 @@ function edit_exp(id1){
     })
 }
 
-window.addEventListener('DOMContentLoaded',getdata);
-
-function getdata(){
-    const token=localStorage.getItem('token');
-    const decodedtoken=parseJwt(token);
-    const ispremiumuser=decodedtoken.ispremiumuser;
-    if(ispremiumuser){
-        const btn1=document.getElementById('razorpay-btn');
-        btn1.remove();
-        document.getElementById('premium').innerHTML=`<div><b>You are a premium user now</b></div>`
-        showleaderboard();   
-
-    }
-    else{
-        const b2=document.getElementById('downloadexpense');
-        b2.remove();
-    }
-    axios.get("http://localhost:3000/expense/get-expense/",{headers:{"Authorization":token}})
-    .then((result)=>{
-        //console.log(result.data.allexpense);
-        for(let i=0; i<result.data.allexpense.length;i++){
-            showlist(result.data.allexpense[i]);
+window.addEventListener('DOMContentLoaded',()=>{ //getdata() to get expenses
+    const page=1;
+    
+        const token=localStorage.getItem('token');
+        const decodedtoken=parseJwt(token);
+        const ispremiumuser=decodedtoken.ispremiumuser;
+        if(ispremiumuser){
+            const btn1=document.getElementById('razorpay-btn');
+            btn1.remove();
+            document.getElementById('premium').innerHTML=`<div><b>You are a premium user now</b></div>`
+            showleaderboard();   
+    
         }
-        //console.log("FROM FRONTEND",result.data.downloadedfilesurl.length);
-        //for(let i=0; i<result.data.downloadedfilesurl.length;i++){
-          //  listofurls(result.data.downloadedfilesurl[i]);
-        //}
+        else{
+            const b2=document.getElementById('downloadexpense');
+            b2.remove();
+        }
+        getexpenses(page);
+    });
 
-    })
-    .catch(err=>console.log(err));
+function getexpenses(page){
+        const ul=document.getElementById('expenselist');
+        ul.innerText="";
+        
+        const token=localStorage.getItem('token');
+        axios.get(`http://localhost:3000/expense/get-expense?page=${page}`,{headers:{"Authorization":token}})
+        .then((result)=>{
+
+            console.log(result.data);//all exp in that page
+            for(let i=0; i<result.data.allexpenses.length;i++){
+                showlist(result.data.allexpenses[i]);
+            }
+            showpagination(result.data);
+            //console.log(result.data.allexpense);
+            
+            //console.log("FROM FRONTEND",result.data.downloadedfilesurl.length);
+            //for(let i=0; i<result.data.downloadedfilesurl.length;i++){
+              //  listofurls(result.data.downloadedfilesurl[i]);
+            //}
+    
+        })
+        .catch(err=>console.log(err));
+    
+    
+    //function listofurls(link){
+      //  var ul=document.getElementById('downlodedfiles');
+        //var a = document.createElement("a");
+          //      a.href = link.fileURL;
+            //   a.download = "myexpense";
+        //ul.appendChild(a);
+         
+    //}
 }
 
-//function listofurls(link){
-  //  var ul=document.getElementById('downlodedfiles');
-    //var a = document.createElement("a");
-      //      a.href = link.fileURL;
-        //   a.download = "myexpense";
-    //ul.appendChild(a);
-     
-//}
+
+function showpagination(data){
+    const currentpage=data.currentpage;
+    const hasnextpage=data.hasnextpage;
+    const nextpage=data.nextpage;
+    const haspreviouspage=data.haspreviouspage;
+    const previouspage=data.previouspage;
+    const lastpage=data.lastpage;
+    const pagination=document.getElementById('pagination');
+    pagination.innerHTML='';
+
+    if(haspreviouspage){
+        const prev_btn=document.createElement('button');
+        prev_btn.innerHTML=previouspage;
+        prev_btn.class="btn btn-secondary";
+        prev_btn.addEventListener('click',()=>getexpenses(previouspage))
+        pagination.appendChild(prev_btn);
+    }
+
+    const curr_btn=document.createElement('button');
+    curr_btn.class="btn btn-secondary";
+    curr_btn.innerHTML=`<h3>${currentpage}</h3>`;
+    curr_btn.addEventListener('click',()=>getexpenses(currentpage));
+    pagination.appendChild(curr_btn);
+
+    if(hasnextpage){
+        const nxt_btn=document.createElement('button');
+        nxt_btn.class="btn btn-secondary";
+        nxt_btn.addEventListener('click',()=>getexpenses(nextpage));
+        pagination.appendChild(nxt_btn);
+    }
+    const last_btn=document.createElement('button');
+    last_btn.class="btn btn-secondary";
+    last_btn.innerHTML=`<h3>${lastpage}</h3>`;
+    last_btn.addEventListener('click',()=>getexpenses(lastpage));
+    pagination.appendChild(last_btn);
+
+}
 
 document.getElementById('razorpay-btn').onclick=async function(e){
     e.preventDefault();
