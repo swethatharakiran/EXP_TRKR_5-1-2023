@@ -1,6 +1,7 @@
 const Exp=require('../models/expense');
+const Downloadedfilesurl=require("../models/downloadedfilesurl");
 const jwt=require('jsonwebtoken');
-const { BlobServiceClient } = require('@azure/storage-blob');
+const AWS=require('aws-sdk');
 const { v1: uuidv1} = require('uuid');
 
 exports.postaddexpense=async(req,res,next)=>{
@@ -52,7 +53,7 @@ exports.edit_exp=async(req,res,next)=>{
 exports.getexpense=async(req,res,next)=>{
     try{
         const exp_list=await Exp.findAll({where:{userId:req.user.id}});
-        console.log('hi')
+         console.log('hi')
         res.status(200).json({allexpense:exp_list});
     }
     catch(err){
@@ -68,44 +69,44 @@ exports.downloadExpenses =  async (req, res) => {
         if(!req.user.ispremiumuser){
             return res.status(401).json({ success: false, message: 'User is not a premium User'})
         }
-        const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING; //  Never push it to github.
-        // Create the BlobServiceClient object which will be used to create a container client
-        const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING);
         
-        const containerName = 'swethakh29gmailexpensetracker'; //this needs to be unique name
-
-        console.log('\nCreating container...');
-        console.log('\t', containerName);
-
-        // Get a reference to a container
-        const containerClient = await blobServiceClient.getContainerClient(containerName);
-
-        //check whether the container already exists or not
-        if(!containerClient.exists()){
-            // Create the container if the container doesnt exist
-            const createContainerResponse = await containerClient.create({ access: 'container'});
-            console.log("Container was created successfully. requestId: ", createContainerResponse.requestId);
-        }
-        // Create a unique name for the blob
-        const blobName = 'expenses' + uuidv1() + '.txt';
-
-        // Get a block blob client
-        const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-
-        console.log('\nUploading to Azure storage as blob:\n\t', blobName);
-
-        // Upload data to the blob as a string
-        const data =  JSON.stringify(await req.user.getExpenses());
-
-        const uploadBlobResponse = await blockBlobClient.upload(data, data.length);
-        console.log("Blob was uploaded successfully. requestId: ", JSON.stringify(uploadBlobResponse));
-
-        //We send the fileUrl so that the in the frontend we can do a click on this url and download the file
-        const fileUrl = `https://demostoragesharpener.blob.core.windows.net/${containerName}/${blobName}`;
-        res.status(201).json({ fileUrl, success: true}); // Set disposition and send it.
-    } catch(err) {
-        res.status(500).json({ error: err, success: false, message: 'Something went wrong'})
+        const expenses=await req.user.getExpenses();
+        const fileData=JSON.stringify(expenses);
+        const fileName=`expenses${req.user.id}/${new Date()}.txt`;
+        const S3result=await uploadtoS3(fileData,fileName);//S3result stores file url
+        await Downloadedfilesurl.create({fileURL:S3result,userId:req.user.id});// to store downloaded files url in table
+        const downloadedfilesurl=await Downloadedfilesurl.findAll({where:{userId:req.user.id}});
+        //console.log("FROM DOWNLOADS",downloadedfilesurl);
+        res.status(201).json({fileURL:S3result,message:'file uplaod successful',downloadedfilesurl:downloadedfilesurl});
+    
     }
+        catch(err){
+            console.log(err);
+            res.status(500).send({message:'interval server error'});
+        }
+    }
+        
 
-};
-
+    const uploadtoS3=(fileData,fileName)=>{
+        const s3=new AWS.S3({
+            accessKeyId:'',//amazon aws s3 access key id
+            secretAccessKey:''// aws secret access key, its in .env file
+        });
+        const params={
+            Bucket:'khs29expensetracker',
+            Key:fileName,
+            Body:fileData,
+            ACL:'public-read'//who can access
+        };
+        return new Promise((resolve,reject)=>{
+            s3.upload(params,(S3Err,S3Result)=>{
+                if(S3Err){
+                    console.log("ERR-->",S3Err);
+                    reject(S3Err);
+                }
+            
+            console.log("--->",S3Result);
+              resolve(S3Result.Location);
+            })
+        })
+    }

@@ -7,9 +7,10 @@ const jwt=require('jsonwebtoken');
 
 exports.purchasepremium=async(req,res,next)=>{
     try{
+        console.log(process.env.RAZORPAY_KEY_ID);
     var rzp=new Razorpay({
-    key_id:process.env.RAZORPAY_KEY_ID,
-    key_secret:process.env.RAZORPAY_KEY_ID_SECRET
+    key_id:'',//razorpay key id
+    key_secret:''//razorpay key secret
 })
 const amount=3000;
 rzp.orders.create({amount,currency:'INR'},(err,order)=>{
