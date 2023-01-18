@@ -4,7 +4,8 @@ const bcrypt=require('bcrypt');
 const User=require('../models/user');
 const Forgotpassword=require('../models/password');
 //const sequelize = require('../util/database');
-//require('dotenv').config();
+require('dotenv').config();
+
 
 exports.forgotpassword=async(req,res)=>{
 try{
@@ -18,8 +19,9 @@ try{
         .catch(err=>{
             throw new Error(err)
         })
-
-        sgmail.setApiKey('');// enter sendgrid api key here
+        
+        console.log(process.env.SENGRID_API_KEY)
+        sgmail.setApiKey(process.env.SENGRID_API_KEY);// enter sendgrid api key here
         const msg = {
             to: 'swethakh29@gmail.com', 
             from: 'yj.rocks.2411@gmail.com', 

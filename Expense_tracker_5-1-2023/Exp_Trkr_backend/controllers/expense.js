@@ -3,6 +3,7 @@ const Downloadedfilesurl=require("../models/downloadedfilesurl");
 const jwt=require('jsonwebtoken');
 const AWS=require('aws-sdk');
 const { v1: uuidv1} = require('uuid');
+require('dotenv').config();
 
 exports.postaddexpense=async(req,res,next)=>{
     try{
@@ -100,11 +101,12 @@ exports.downloadExpenses =  async (req, res) => {
         }
     }
         
-
+    
     const uploadtoS3=(fileData,fileName)=>{
+        console.log("KEYSSSS-->",process.env.AMAZON_S3_KEY_ID);
         const s3=new AWS.S3({
-            accessKeyId:'',//amazon aws s3 access key id
-            secretAccessKey:''// aws secret access key, its in .env file
+            accessKeyId:process.env.AMAZON_S3_KEY_ID,//amazon aws s3 access key id
+            secretAccessKey:process.env.AMAZON_SECRET_KEY// aws secret access key, its in .env file
         });
         const params={
             Bucket:'khs29expensetracker',
