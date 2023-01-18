@@ -2,6 +2,10 @@ const path=require('path');
 const express=require('express');
 const bodyparser=require('body-parser');
 const cors=require('cors');
+const helmet=require('helmet');
+const morgan=require('morgan');
+const fs=require('fs');
+const https=require('https');
 
 const app=express();
 const dotenv=require('dotenv');
@@ -19,6 +23,13 @@ const addexpenseroutes=require('./routes/expense');
 const purchaseroutes=require('./routes/purchase');
 const premiumfeatureroutes=require('./routes/premiumfeature');
 const passwordroutes=require('./routes/password');
+const accesslogstream=fs.createWriteStream(path.join(__dirname,'access.log'));
+
+//const privateKey=fs.readFileSync('server.key');
+//const certificate=fs.readFileSync('server.cert');
+
+app.use(helmet());
+app.use(morgan('combined',{stream:accesslogstream}));
 
 
 
@@ -44,9 +55,11 @@ Forgotpassword.belongsTo(User);
 
 User.hasMany(Downloadedfilesurl);
 Downloadedfilesurl.belongsTo(User);
-
+//console.log("-->APP",process.env.PORT);
 
 
 sequelize.sync().then(res=>{
-    app.listen(3000);
+    //https.createServer(
+        //{key:privateKey,cert:certificate},app).listen(3000);
+    app.listen(process.env.PORT);
 }).catch(err=>console.log(err));

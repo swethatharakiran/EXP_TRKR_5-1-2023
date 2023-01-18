@@ -3,14 +3,14 @@ const Razorpay=require('razorpay');
 const jwt=require('jsonwebtoken');
 //const usercontroller=require('./user');
 //import { generatetoken } from './user';
-//require('dotenv').config();
+require('dotenv').config();
 
 exports.purchasepremium=async(req,res,next)=>{
     try{
         console.log(process.env.RAZORPAY_KEY_ID);
     var rzp=new Razorpay({
-    key_id:'rzp_test_hLNCyRO3lfUZpZ',
-    key_secret:'LFOXSlxbI6syn9ZxmrSBlA3A'
+    key_id:process.env.RAZORPAY_KEY_ID,
+    key_secret:process.env.RAZORPAY_KEY_SECRET
 })
 const amount=3000;
 rzp.orders.create({amount,currency:'INR'},(err,order)=>{
