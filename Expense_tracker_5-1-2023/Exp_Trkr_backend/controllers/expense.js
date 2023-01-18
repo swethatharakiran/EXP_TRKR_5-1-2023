@@ -52,7 +52,8 @@ exports.edit_exp=async(req,res,next)=>{
 
 exports.getexpense=async(req,res,next)=>{
     try{
-        const ITEMS_PER_PAGE=2;
+        const ITEMS_PER_PAGE=+req.query.itemspp||2;
+        console.log(ITEMS_PER_PAGE);
         const page=+req.query.page||1;
         const total= await Exp.count({where:{userId:req.user.id}})
             

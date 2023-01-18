@@ -55,8 +55,20 @@ function edit_exp(id1){
     })
 }
 
+let page=1;
+function changefunc(){
+    const selectedvalue=document.getElementById('selectbox').value;
+    page=1;
+    getexpenses(page,selectedvalue);
+}
+
 window.addEventListener('DOMContentLoaded',()=>{ //getdata() to get expenses
-    const page=1;
+    page=localStorage.getItem('page');
+    const selectedvalue=document.getElementById('selectbox').value;
+    let itemspp=selectedvalue;
+    
+    localStorage.setItem('page',page);
+    console.log(page);
     
         const token=localStorage.getItem('token');
         const decodedtoken=parseJwt(token);
@@ -72,15 +84,16 @@ window.addEventListener('DOMContentLoaded',()=>{ //getdata() to get expenses
             const b2=document.getElementById('downloadexpense');
             b2.remove();
         }
-        getexpenses(page);
+        getexpenses(page,itemspp);
     });
 
-function getexpenses(page){
+function getexpenses(page,itemspp){
         const ul=document.getElementById('expenselist');
         ul.innerText="";
         
         const token=localStorage.getItem('token');
-        axios.get(`http://localhost:3000/expense/get-expense?page=${page}`,{headers:{"Authorization":token}})
+        axios.get(`http://localhost:3000/expense/get-expense?page=${page}&itemspp=${itemspp}`,
+        {headers:{"Authorization":token}})
         .then((result)=>{
 
             console.log(result.data);//all exp in that page
@@ -119,31 +132,35 @@ function showpagination(data){
     const lastpage=data.lastpage;
     const pagination=document.getElementById('pagination');
     pagination.innerHTML='';
+    const itemspp=document.getElementById('selectbox').value;
 
     if(haspreviouspage){
         const prev_btn=document.createElement('button');
         prev_btn.innerHTML=previouspage;
         prev_btn.class="btn btn-secondary";
-        prev_btn.addEventListener('click',()=>getexpenses(previouspage))
+        localStorage.setItem('page',previouspage);
+        prev_btn.addEventListener('click',()=>getexpenses(previouspage,itemspp))
         pagination.appendChild(prev_btn);
     }
 
     const curr_btn=document.createElement('button');
     curr_btn.class="btn btn-secondary";
     curr_btn.innerHTML=`<h3>${currentpage}</h3>`;
-    curr_btn.addEventListener('click',()=>getexpenses(currentpage));
+    localStorage.setItem('page',currentpage);
+    curr_btn.addEventListener('click',()=>getexpenses(currentpage,itemspp));
     pagination.appendChild(curr_btn);
 
     if(hasnextpage){
         const nxt_btn=document.createElement('button');
         nxt_btn.class="btn btn-secondary";
-        nxt_btn.addEventListener('click',()=>getexpenses(nextpage));
+        localStorage.setItem('page',nextpage);
+        nxt_btn.addEventListener('click',()=>getexpenses(nextpage,itemspp));
         pagination.appendChild(nxt_btn);
     }
     const last_btn=document.createElement('button');
     last_btn.class="btn btn-secondary";
     last_btn.innerHTML=`<h3>${lastpage}</h3>`;
-    last_btn.addEventListener('click',()=>getexpenses(lastpage));
+    last_btn.addEventListener('click',()=>getexpenses(lastpage,itemspp));
     pagination.appendChild(last_btn);
 
 }
